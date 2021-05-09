@@ -1,7 +1,7 @@
 <div fxLayout="row wrap" fxLayoutAlign="center stretch">
   <mat-card fxFlex="0 0 400px">
     <mat-card-title>Anmelden</mat-card-title>
-    <form [formGroup]="loginForm" (ngSubmit)="login()" *ngIf="mds.isApiValid">
+    <form [formGroup]="loginForm" (ngSubmit)="login()" *ngIf="mds.appConfig?.isValidApiVersion">
       <mat-card-content fxLayout="column">
         <mat-form-field>
           <input matInput formControlName="name" placeholder="Anmeldename" (keyup.enter)="pw.focus()">
@@ -15,7 +15,7 @@
       </mat-card-actions>
     </form>
     <p style="color: chocolate"><b>{{ problemText }}</b></p>
-    <p style="color: chocolate" *ngIf="!mds.isApiValid"><b>Die Verbindung mit dem Server ist nicht möglich.</b></p>
+    <p style="color: chocolate" *ngIf="!mds.appConfig?.isValidApiVersion"><b>Die Verbindung mit dem Server ist nicht möglich.</b></p>
   </mat-card>
 
   <mat-card fxFlex="0 0 400px" class="mat-card-gray">

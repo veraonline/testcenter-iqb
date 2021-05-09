@@ -15,7 +15,7 @@ export class TestStarterComponent implements OnInit, OnDestroy {
   booklets: BookletData[] = [];
   openTestletsCount = 0;
   private getBookletDataSubscription: Subscription = null;
-  public bookletSelectTitle = 'Bitte wählen';
+  bookletSelectTitle = 'Bitte wählen';
   problemText = '';
 
   constructor(
@@ -55,6 +55,13 @@ export class TestStarterComponent implements OnInit, OnDestroy {
                     () => {
                       this.problemText = this.booklets.length ? '' : 'Für diese Anmeldung wurde kein Test gefunden.';
                       this.mds.setSpinnerOff();
+                      if (this.openTestletsCount <= 0) {
+                        this.mds.appSubTitle$.next(this.cts.getCustomText('login_bookletSelectPromptNull'));
+                      } else if (this.openTestletsCount === 1) {
+                        this.mds.appSubTitle$.next(this.cts.getCustomText('login_bookletSelectPromptOne'));
+                      } else {
+                        this.mds.appSubTitle$.next(this.cts.getCustomText('login_bookletSelectPromptMany'));
+                      }
                     }
                   );
               }

@@ -19,7 +19,7 @@ export class AuthInterceptor implements HttpInterceptor {
   // TODO separation of concerns: split into two interceptors,
   // one for error handling, one for auth token addition
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
-    if (this.mds.isApiValid) {
+    if (this.mds.appConfig === null || this.mds.appConfig?.isValidApiVersion) {
       let tokenStr = '';
       const authData = MainDataService.getAuthData();
       if (authData) {

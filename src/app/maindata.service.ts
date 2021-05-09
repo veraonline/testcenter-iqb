@@ -6,33 +6,31 @@ import {
   AuthData, KeyValuePairs
 } from './app.interfaces';
 import { BackendService } from './backend.service';
-import { AppConfig, BroadCastingServiceInfo } from './config/app.config';
+import { AppConfig, localStorageTestConfigKey } from './config/app.config';
 
 const localStorageAuthDataKey = 'iqb-tc-a';
-const localStorageTestConfigKey = 'iqb-tc-c';
 
 @Injectable({
   providedIn: 'root'
 })
 
 export class MainDataService {
-  public appError$ = new Subject<AppError>();
-  public errorReportingSilent = false;
-  public isSpinnerOn$ = new BehaviorSubject<boolean>(false);
-  public progressVisualEnabled = true;
-  public isApiValid = true;
-  public apiVersion: string;
-  public broadcastingServiceInfo: BroadCastingServiceInfo = { status: 'none' };
-  public appConfig: AppConfig = null;
-  public sysCheckAvailable = false;
+  appError$ = new Subject<AppError>();
+  errorReportingSilent = false;
+  isSpinnerOn$ = new BehaviorSubject<boolean>(false);
+  appTitle$ = new BehaviorSubject<string>('IQB-TestcenterX');
+  appSubTitle$ = new BehaviorSubject<string>('');
+  progressVisualEnabled = true;
+  appConfig: AppConfig = null;
+  sysCheckAvailable = false;
 
-  public defaultTcHeaderHeight = document.documentElement.style.getPropertyValue('--tc-header-height');
-  public defaultTcUnitTitleHeight = document.documentElement.style.getPropertyValue('--tc-unit-title-height');
-  public defaultTcUnitPageNavHeight = document.documentElement.style.getPropertyValue('--tc-unit-page-nav-height');
+  defaultTcHeaderHeight = document.documentElement.style.getPropertyValue('--tc-header-height');
+  defaultTcUnitTitleHeight = document.documentElement.style.getPropertyValue('--tc-unit-title-height');
+  defaultTcUnitPageNavHeight = document.documentElement.style.getPropertyValue('--tc-unit-page-nav-height');
 
   // set by app.component.ts
-  public postMessage$ = new Subject<MessageEvent>();
-  public appWindowHasFocus$ = new Subject<boolean>();
+  postMessage$ = new Subject<MessageEvent>();
+  appWindowHasFocus$ = new Subject<boolean>();
 
   static getAuthData(): AuthData {
     let myReturn: AuthData = null;
@@ -76,9 +74,7 @@ export class MainDataService {
   constructor(
     private bs: BackendService,
     private cts: CustomtextService
-  ) {
-    this.appConfig = new AppConfig(cts);
-  }
+  ) { }
 
   setSpinnerOn(): void {
     this.isSpinnerOn$.next(true);
@@ -96,14 +92,6 @@ export class MainDataService {
       localStorage.setItem(localStorageAuthDataKey, JSON.stringify(authData));
     } else {
       localStorage.removeItem(localStorageAuthDataKey);
-    }
-  }
-
-  setTestConfig(testConfig: KeyValuePairs = null): void {
-    if (testConfig) {
-      localStorage.setItem(localStorageTestConfigKey, JSON.stringify(testConfig));
-    } else {
-      localStorage.removeItem(localStorageTestConfigKey);
     }
   }
 }

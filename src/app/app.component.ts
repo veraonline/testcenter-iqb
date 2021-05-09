@@ -1,11 +1,13 @@
 import {
-  Component, Inject, OnDestroy, OnInit
+  Component, OnDestroy, OnInit
 } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Subscription, combineLatest } from 'rxjs';
 import { CustomtextService } from 'iqb-components';
+import { Title } from '@angular/platform-browser';
 import { MainDataService } from './maindata.service';
 import { BackendService } from './backend.service';
 import { AppError } from './app.interfaces';
+import { AppConfig } from './config/app.config';
 
 @Component({
   selector: 'tc-root',
@@ -14,6 +16,7 @@ import { AppError } from './app.interfaces';
 
 export class AppComponent implements OnInit, OnDestroy {
   private appErrorSubscription: Subscription = null;
+  private appTitleSubscription: Subscription = null;
 
   showError = false;
 
@@ -23,40 +26,8 @@ export class AppComponent implements OnInit, OnDestroy {
     public mds: MainDataService,
     private bs: BackendService,
     private cts: CustomtextService,
-    @Inject('API_VERSION_EXPECTED') private readonly expectedApiVersion: string
+    private titleService: Title
   ) { }
-
-  private static isValidVersion(expectedVersion: string, reportedVersion: string): boolean {
-    if (expectedVersion) {
-      const searchPattern = /\d+/g;
-      const expectedVersionNumbers = expectedVersion.match(searchPattern);
-      if (expectedVersionNumbers) {
-        if (reportedVersion) {
-          const reportedVersionNumbers = reportedVersion.match(searchPattern);
-          if (reportedVersionNumbers) {
-            if (reportedVersionNumbers[0] !== expectedVersionNumbers[0]) {
-              return false;
-            }
-            if (expectedVersionNumbers.length > 1) {
-              if ((reportedVersionNumbers.length < 2) || +reportedVersionNumbers[1] < +expectedVersionNumbers[1]) {
-                return false;
-              }
-              if ((expectedVersionNumbers.length > 2) && reportedVersionNumbers[1] === expectedVersionNumbers[1]) {
-                if ((reportedVersionNumbers.length < 3) || +reportedVersionNumbers[2] < +expectedVersionNumbers[2]) {
-                  return false;
-                }
-              }
-            }
-          } else {
-            return false;
-          }
-        } else {
-          return false;
-        }
-      }
-    }
-    return true;
-  }
 
   closeErrorBox(): void {
     this.showError = false;
@@ -64,15 +35,22 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     setTimeout(() => {
-      this.mds.appConfig.setDefaultCustomTexts();
-
       this.appErrorSubscription = this.mds.appError$.subscribe(err => {
         if (err && !this.mds.errorReportingSilent) {
           this.errorData = err;
           this.showError = true;
         }
       });
-
+      this.appTitleSubscription = combineLatest([this.mds.appTitle$, this.mds.appSubTitle$, this.mds.isSpinnerOn$])
+        .subscribe(titles => {
+          if (titles[2]) {
+            this.titleService.setTitle(`${titles[0]} | Bitte warten}`);
+          } else if (titles[1]) {
+            this.titleService.setTitle(`${titles[0]} | ${titles[1]}`);
+          } else {
+            this.titleService.setTitle(titles[0]);
+          }
+        });
       window.addEventListener('message', (event: MessageEvent) => {
         const msgData = event.data;
         const msgType = msgData.type;
@@ -87,31 +65,29 @@ export class AppComponent implements OnInit, OnDestroy {
 
       this.bs.getSysConfig().subscribe(sysConfig => {
         if (sysConfig) {
-          this.cts.addCustomTexts(sysConfig.customTexts);
+          this.mds.appConfig = new AppConfig(sysConfig, this.cts);
+          this.mds.appTitle$.next(this.mds.appConfig.app_title);
           const authData = MainDataService.getAuthData();
           if (authData) {
             this.cts.addCustomTexts(authData.customTexts);
           }
 
-          if (sysConfig.broadcastingService && sysConfig.broadcastingService.status) {
-            this.mds.broadcastingServiceInfo = sysConfig.broadcastingService;
-          }
-          this.mds.isApiValid = AppComponent.isValidVersion(this.expectedApiVersion, sysConfig.version);
-          this.mds.apiVersion = sysConfig.version;
-
-          if (!this.mds.isApiValid) {
+          if (!this.mds.appConfig.isValidApiVersion) {
             this.mds.appError$.next({
               label: 'Server-Problem: API-Version ungültig',
-              description: `erwartet: ${this.expectedApiVersion}, gefunden: ${sysConfig.version}`,
+              description: `erwartet:
+                ${this.mds.appConfig.expectedApiVersion}, gefunden: ${this.mds.appConfig.detectedApiVersion}`,
               category: 'FATAL'
             });
           }
 
           // TODO implement SysConfig.mainLogo
-
-          this.mds.setTestConfig(sysConfig.testConfig);
         } else {
-          this.mds.isApiValid = false;
+          this.mds.appError$.next({
+            label: 'Server-Problem: Konnte Konfiguration nicht laden',
+            description: 'getSysConfig gescheitert',
+            category: 'FATAL'
+          });
         }
       });
 
@@ -159,6 +135,9 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     if (this.appErrorSubscription !== null) {
       this.appErrorSubscription.unsubscribe();
+    }
+    if (this.appTitleSubscription !== null) {
+      this.appTitleSubscription.unsubscribe();
     }
   }
 }

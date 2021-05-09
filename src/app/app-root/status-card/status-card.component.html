@@ -14,11 +14,11 @@
   <ul style="margin: 0;">
     <li *ngIf="!isProductionMode">Build-Modus: Dev</li>
     <li>Version {{appVersion}}</li>
-    <li>API: Version {{mds.apiVersion}}, {{apiVersionExpected}} erforderlich</li>
-    <li>Broadcasting-Service: {{mds.broadcastingServiceInfo.status}}
-      <span *ngIf="mds.broadcastingServiceInfo.version">
-        - Version {{mds.broadcastingServiceInfo.version}},
-        {{mds.broadcastingServiceInfo.versionExpected}} erforderlich
+    <li>API: Version {{mds.appConfig?.detectedApiVersion}}, {{apiVersionExpected}} erforderlich</li>
+    <li>Broadcasting-Service: {{mds.appConfig?.broadcastingService.status}}
+      <span *ngIf="mds.appConfig?.broadcastingService.version">
+        - Version {{mds.appConfig?.broadcastingService.version}},
+        {{mds.appConfig?.broadcastingService.versionExpected}} erforderlich
       </span>
     </li>
     <li>Verona Player Interface: Version {{veronaApiVersionSupported}}</li>
