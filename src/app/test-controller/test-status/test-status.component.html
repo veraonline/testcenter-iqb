@@ -18,9 +18,9 @@
         </p>
       </mat-card-content>
       <mat-card-actions *ngIf="(tcs.testStatus$ | async) !== tcs.testStatusEnum.PAUSED">
-        <button mat-raised-button color="primary" (click)="terminateTest()">
+        <a mat-raised-button color="primary" (click)="terminateTest()">
           {{ 'Test beenden'  | customtext:'login_testEndButtonLabel':cts.updateCount}}
-        </button>
+        </a>
       </mat-card-actions>
     </mat-card>
 

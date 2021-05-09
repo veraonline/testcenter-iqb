@@ -4,10 +4,12 @@
     <form [formGroup]="loginForm" (ngSubmit)="login()" *ngIf="mds.appConfig?.isValidApiVersion">
       <mat-card-content fxLayout="column">
         <mat-form-field>
-          <input matInput formControlName="name" placeholder="Anmeldename" (keyup.enter)="pw.focus()">
+          <mat-label>Anmeldename</mat-label>
+          <input matInput formControlName="name" (keyup.enter)="pw.focus()">
         </mat-form-field>
         <mat-form-field>
-          <input matInput #pw type="password" formControlName="pw" placeholder="Kennwort">
+          <mat-label>Kennwort</mat-label>
+          <input matInput #pw type="password" formControlName="pw">
         </mat-form-field>
       </mat-card-content>
       <mat-card-actions>
@@ -28,8 +30,8 @@
       <status-card></status-card>
     </mat-card-content>
     <mat-card-actions>
-      <button *ngIf="this.mds.sysCheckAvailable" [routerLink]="['/r/check-starter']" mat-raised-button color="primary">System-Check</button>
-      <button [routerLink]="['/priv']" mat-raised-button color="primary">Impressum/Datenschutz</button>
+      <a *ngIf="this.mds.sysCheckAvailable" [routerLink]="['/r/check-starter']" mat-raised-button color="primary">System-Check</a>
+      <a [routerLink]="['/priv']" mat-raised-button color="primary">Impressum/Datenschutz</a>
     </mat-card-actions>
   </mat-card>
 </div>

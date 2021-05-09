@@ -1,5 +1,5 @@
 import {
-  Component, OnDestroy, OnInit
+  Component, Inject, OnDestroy, OnInit
 } from '@angular/core';
 import { Subscription, combineLatest } from 'rxjs';
 import { CustomtextService } from 'iqb-components';
@@ -26,7 +26,8 @@ export class AppComponent implements OnInit, OnDestroy {
     public mds: MainDataService,
     private bs: BackendService,
     private cts: CustomtextService,
-    private titleService: Title
+    private titleService: Title,
+    @Inject('API_VERSION_EXPECTED') public apiVersionExpected: string
   ) { }
 
   closeErrorBox(): void {
@@ -76,7 +77,7 @@ export class AppComponent implements OnInit, OnDestroy {
             this.mds.appError$.next({
               label: 'Server-Problem: API-Version ungültig',
               description: `erwartet:
-                ${this.mds.appConfig.expectedApiVersion}, gefunden: ${this.mds.appConfig.detectedApiVersion}`,
+                ${this.apiVersionExpected}, gefunden: ${this.mds.appConfig.detectedApiVersion}`,
               category: 'FATAL'
             });
           }

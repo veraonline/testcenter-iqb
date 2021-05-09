@@ -6,7 +6,7 @@
 <div class="error-msg" *ngIf="showError" [matTooltip]="errorData?.description" fxLayout="row" fxLayoutAlign="space-between center">
   <mat-icon>error</mat-icon>
   {{ errorData?.label }}
-  <button mat-button (click)="closeErrorBox()" matTooltip="Fehlernachricht ausblenden" fxFlex="none">
+  <button mat-button (click)="closeErrorBox()" matTooltip="Fehlernachricht ausblenden" fxFlex="none" aria-label="Schließe Fehlernachricht">
     <mat-icon>clear</mat-icon>
   </button>
 </div>

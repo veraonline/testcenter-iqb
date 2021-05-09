@@ -27,7 +27,7 @@
   position: absolute;
   width: 100%;
   padding-right: 5px;
-  padding-top: 2px;
+  padding-top: 4px;
   padding-left: 25px;
   color: white;
   z-index: 444;
@@ -59,6 +59,7 @@ mat-toolbar {
 .current-unit-dot {
   height: 8px;
   width: 8px;
+  margin-top: -20px;
   background-color: red;
   border-radius: 50%;
   display: inline-block;
@@ -66,6 +67,7 @@ mat-toolbar {
 .notcurrent-unit-dot {
   height: 8px;
   width: 8px;
+  margin-top: -20px;
   background-color: transparent;
   border-radius: 50%;
   display: inline-block;
@@ -85,4 +87,15 @@ mat-toolbar {
 .debug-pane b {
   color: white;
   font-weight: normal;
+}
+.unit-button {
+  background-color: #b2b2b2;
+  max-height: 30px;
+  line-height: 30px;
+  padding: 0;
+  min-width: 20px;
+  margin: 2px;
+}
+.unit-button-label {
+  margin: 0;
 }

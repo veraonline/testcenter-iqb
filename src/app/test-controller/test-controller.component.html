@@ -8,32 +8,32 @@
 
 <div id="header" fxLayout="row" fxLayoutAlign="end center">
     <p class="timer" *ngIf="tcs.testMode.showTimeLeft">{{ timerValue?.timeLeftString }}</p>
-    <button mat-fab [disabled]="!tcs.unitPrevEnabled" *ngIf="(tcs.bookletConfig.unit_navibuttons !== 'OFF') && ((tcs.testStatus$ | async) === tcs.testStatusEnum.RUNNING)" color="accent"
-            (click)="tcs.setUnitNavigationRequest(unitNavigationTarget.PREVIOUS)" matTooltip="Zurück" fxFlex="none">
+    <a mat-fab [disabled]="!tcs.unitPrevEnabled" *ngIf="(tcs.bookletConfig.unit_navibuttons !== 'OFF') && ((tcs.testStatus$ | async) === tcs.testStatusEnum.RUNNING)" color="accent"
+            (click)="tcs.setUnitNavigationRequest(unitNavigationTarget.PREVIOUS)" matTooltip="Zurück" fxFlex="none" aria-label="Gehe zurück">
       <i class="material-icons">chevron_left</i>
-    </button>
+    </a>
     <div *ngIf="(tcs.bookletConfig.unit_navibuttons === 'FULL') && ((tcs.testStatus$ | async) === tcs.testStatusEnum.RUNNING)" fxLayout="row wrap" fxLayoutAlign="start center">
-      <div *ngFor="let u of tcs.unitListForNaviButtons">
-        <div fxLayout="column" fxLayoutAlign="start center">
-            <button (click)="tcs.setUnitNavigationRequest(u.sequenceId.toString())" class="unit-button" [disabled]="u.disabled">{{ u.shortLabel }}</button>
-            <span class="current-unit-dot" *ngIf="u.isCurrent"></span>
-            <span class="notcurrent-unit-dot" *ngIf="!u.isCurrent"></span>
-        </div>
-      </div>
+      <a *ngFor="let u of tcs.unitListForNaviButtons" class="unit-button" (click)="tcs.setUnitNavigationRequest(u.sequenceId.toString())" mat-button
+           [attr.disabled]="u.disabled" [attr.aria-label]="'Gehe zu ' + u.shortLabel + (u.isCurrent ? ' (aktuell)' : '')">
+        <div class="unit-button-label">{{ u.shortLabel }}</div>
+        <div class="current-unit-dot" *ngIf="u.isCurrent"></div>
+        <div class="notcurrent-unit-dot" *ngIf="!u.isCurrent"></div>
+      </a>
     </div>
-    <button mat-fab [disabled]="!tcs.unitNextEnabled" *ngIf="(tcs.bookletConfig.unit_navibuttons !== 'OFF')  && ((tcs.testStatus$ | async) === tcs.testStatusEnum.RUNNING)" color="accent"
+    <a mat-fab [disabled]="!tcs.unitNextEnabled" *ngIf="(tcs.bookletConfig.unit_navibuttons !== 'OFF')  && ((tcs.testStatus$ | async) === tcs.testStatusEnum.RUNNING)"
+       color="accent" aria-label="Gehe weiter"
             (click)="tcs.setUnitNavigationRequest(unitNavigationTarget.NEXT)" matTooltip="Weiter" fxFlex="none">
       <i class="material-icons">chevron_right</i>
-    </button>
+    </a>
     <div class="plus-buttons" fxFlex="none" fxLayout="row">
-      <button mat-button (click)="showReviewDialog()" *ngIf="tcs.testMode.canReview" matTooltip="Kommentar senden" fxFlex="none">
+      <a mat-button (click)="showReviewDialog()" *ngIf="tcs.testMode.canReview" matTooltip="Kommentar senden" fxFlex="none">
         <mat-icon>rate_review</mat-icon>
-      </button>
-      <button mat-button (click)="tcs.setUnitNavigationRequest(unitNavigationTarget.MENU)"
+      </a>
+      <a mat-button (click)="tcs.setUnitNavigationRequest(unitNavigationTarget.MENU)"
               *ngIf="(tcs.bookletConfig.unit_menu !== 'OFF') || tcs.testMode.showUnitMenu"
-              matTooltip="Zur Aufgabenliste" fxFlex="none">
+              matTooltip="Zur Aufgabenliste" fxFlex="none" aria-label="Gehe zur Aufgabenliste">
         <mat-icon>menu</mat-icon>
-      </button>
+      </a>
     </div>
 </div>
 
