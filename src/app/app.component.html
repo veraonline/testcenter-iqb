@@ -2,6 +2,7 @@
   <a [routerLink]="['/']">
     <img src="assets/IQB-LogoA.png" matTooltip="Zur Startseite" alt="Gehe zur Startseite"/>
   </a>
+  <button (click)="color()">color</button>
 </div>
 <div class="error-msg" *ngIf="showError" [matTooltip]="errorData?.description" fxLayout="row" fxLayoutAlign="space-between center">
   <mat-icon>error</mat-icon>

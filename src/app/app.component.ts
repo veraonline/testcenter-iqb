@@ -98,6 +98,14 @@ export class AppComponent implements OnInit, OnDestroy {
     });
   }
 
+  color(): void {
+    const currentValue = document.documentElement.style.getPropertyValue('--tc-body-background');
+    const newValue = prompt('Neuer Hintergrund', currentValue);
+    if (newValue) {
+      document.documentElement.style.setProperty('--tc-body-background', newValue);
+    }
+  }
+
   private setupFocusListeners() {
     let hidden = '';
     let visibilityChange = '';
