@@ -7,11 +7,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { Sort } from '@angular/material/sort';
 
 import { saveAs } from 'file-saver';
+import { map } from 'rxjs/operators';
 import {
   ConfirmDialogComponent, ConfirmDialogData, MessageDialogComponent,
   MessageDialogData, MessageType
 } from 'iqb-components';
-import { map } from 'rxjs/operators';
+
 import { WorkspaceDataService } from '../workspacedata.service';
 import {
   IQBFileType, GetFileResponseData, IQBFile, IQBFileTypes
@@ -113,7 +114,7 @@ export class FilesComponent implements OnInit {
         width: '400px',
         data: <ConfirmDialogData>{
           title: 'Löschen von Dateien',
-          content: `Sie haben ${p ? filesToDelete.length : 'eine'} Datei${p ? 'en' : ''}\` 
+          content: `Sie haben ${p ? filesToDelete.length : 'eine'} Datei${p ? 'en' : ''}\`
             ausgewählt. Soll${p ? 'en' : ''}  diese gelöscht werden?`,
           confirmbuttonlabel: 'Löschen',
           showcancel: true
@@ -123,7 +124,7 @@ export class FilesComponent implements OnInit {
       dialogRef.afterClosed().subscribe(result => {
         if (result !== false) {
           this.mds.setSpinnerOn();
-          this.bs.deleteFiles(filesToDelete).subscribe((fileDeletionReport: FileDeletionReport) => {
+          this.bs.deleteFiles(this.wds.wsId, filesToDelete).subscribe((fileDeletionReport: FileDeletionReport) => {
             const message = [];
             if (fileDeletionReport.deleted.length > 0) {
               message.push(`${fileDeletionReport.deleted.length} Dateien erfolgreich gelöscht.`);
@@ -132,7 +133,7 @@ export class FilesComponent implements OnInit {
               message.push(`${fileDeletionReport.not_allowed.length} Dateien konnten nicht gelöscht werden.`);
             }
             if (fileDeletionReport.was_used.length > 0) {
-              message.push(`${fileDeletionReport.was_used.length} Dateien werden von anderen verwendet 
+              message.push(`${fileDeletionReport.was_used.length} Dateien werden von anderen verwendet
               und wurden nicht gelöscht.`);
             }
             this.snackBar.open(message.join('<br>'), message.length > 1 ? 'Achtung' : '', { duration: 1000 });
@@ -157,7 +158,7 @@ export class FilesComponent implements OnInit {
       this.files = {};
       this.mds.setSpinnerOff();
     } else {
-      this.bs.getFiles()
+      this.bs.getFiles(this.wds.wsId)
         .pipe(map(fileList => this.addFrontendChecksToFiles(fileList)))
         .subscribe(fileList => {
           this.files = {};
@@ -215,7 +216,7 @@ export class FilesComponent implements OnInit {
           // eslint-disable-next-line no-param-reassign
           file.report.error = [];
         }
-        file.report.error.push(`Verona Version of this Player is not compatible 
+        file.report.error.push(`Verona Version of this Player is not compatible
           with this system's version (\`${this.veronaApiVersionSupported}\`)!`);
       }
     }
@@ -224,7 +225,7 @@ export class FilesComponent implements OnInit {
 
   download(file: IQBFile): void {
     this.mds.setSpinnerOn();
-    this.bs.downloadFile(file.type, file.name)
+    this.bs.downloadFile(this.wds.wsId, file.type, file.name)
       .subscribe(
         (fileData: Blob|boolean) => {
           this.mds.setSpinnerOff();

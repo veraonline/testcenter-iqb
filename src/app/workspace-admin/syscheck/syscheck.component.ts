@@ -5,11 +5,12 @@ import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { SelectionModel } from '@angular/cdk/collections';
 
-import { saveAs } from 'file-saver';
 import { ConfirmDialogComponent, ConfirmDialogData } from 'iqb-components';
+
 import { BackendService } from '../backend.service';
 import { SysCheckStatistics } from '../workspace.interfaces';
 import { MainDataService } from '../../maindata.service';
+import { WorkspaceDataService } from "../workspacedata.service";
 
 @Component({
   templateUrl: './syscheck.component.html',
@@ -25,6 +26,7 @@ export class SyscheckComponent implements OnInit {
 
   constructor(
     private bs: BackendService,
+    public wds: WorkspaceDataService,
     private deleteConfirmDialog: MatDialog,
     private mds: MainDataService,
     public snackBar: MatSnackBar
@@ -40,7 +42,7 @@ export class SyscheckComponent implements OnInit {
 
   updateTable(): void {
     this.tableselectionCheckbox.clear();
-    this.bs.getSysCheckReportList().subscribe(
+    this.bs.getSysCheckReportList(this.wds.wsId).subscribe(
       (resultData: SysCheckStatistics[]) => {
         this.resultDataSource = new MatTableDataSource<SysCheckStatistics>(resultData);
         this.resultDataSource.sort = this.sort;
@@ -67,23 +69,10 @@ export class SyscheckComponent implements OnInit {
       this.tableselectionCheckbox.selected.forEach(element => {
         selectedReports.push(element.id);
       });
-      // TODO determine OS dependent line ending char and use this
-      this.mds.setSpinnerOn();
-      this.bs.getSysCheckReport(selectedReports, ';', '"', '\n').subscribe(
-      (response) => {
-        this.mds.setSpinnerOff();
-        if (response === false) {
-          this.snackBar.open('Keine Daten verfügbar.', 'Fehler', {duration: 3000});
-        } else {
-          const reportData = response as Blob;
-          if (reportData.size > 0) {
-            saveAs(reportData, 'iqb-testcenter-syscheckreports.csv');
-          } else {
-            this.snackBar.open('Keine Daten verfügbar.', 'Fehler', {duration: 3000});
-          }
-          this.tableselectionCheckbox.clear();
-        }
-      });
+
+      this.wds.downloadReport(selectedReports, 'systemCheck', 'iqb-testcenter-syscheckreports.csv');
+
+      this.tableselectionCheckbox.clear();
     }
   }
 
@@ -114,7 +103,7 @@ export class SyscheckComponent implements OnInit {
       dialogRef.afterClosed().subscribe((result) => {
         if (result !== false) {
           this.mds.setSpinnerOn();
-          this.bs.deleteSysCheckReports(selectedReports).subscribe((fileDeletionReport) => {
+          this.bs.deleteSysCheckReports(this.wds.wsId, selectedReports).subscribe((fileDeletionReport) => {
             const message = [];
             if (fileDeletionReport.deleted.length > 0) {
               message.push(`${fileDeletionReport.deleted.length} Berichte erfolgreich gelöscht.`);
