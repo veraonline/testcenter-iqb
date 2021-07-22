@@ -83,13 +83,13 @@ export class ResultsComponent implements OnInit {
 
   downloadCSVReport(reportType: string, filename: string): void {
     if (this.tableselectionCheckbox.selected.length > 0) {
-      const selectedReports: string[] = [];
+      const dataIds: string[] = [];
 
       this.tableselectionCheckbox.selected.forEach(element => {
-        selectedReports.push(element.groupname);
+        dataIds.push(element.groupname);
       });
 
-      this.wds.downloadReport(selectedReports, reportType, filename);
+      this.wds.downloadReport(dataIds, reportType, filename);
 
       this.tableselectionCheckbox.clear();
     }

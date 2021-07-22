@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+
 import { Subscription } from 'rxjs';
+
 import { WorkspaceDataService } from './workspacedata.service';
 import { BackendService } from './backend.service';
 import { MainDataService } from '../maindata.service';
@@ -18,6 +20,12 @@ export class WorkspaceComponent implements OnInit, OnDestroy {
     public mds: MainDataService,
     public wds: WorkspaceDataService
   ) { }
+
+  public navLinks = [
+    { path: 'files', label: 'Dateien' },
+    { path: 'syscheck', label: 'System-Check Berichte' },
+    { path: 'results', label: 'Ergebnisse/Antworten' }
+  ];
 
   ngOnInit(): void {
     setTimeout(() => {

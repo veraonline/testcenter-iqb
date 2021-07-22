@@ -65,12 +65,12 @@ export class SyscheckComponent implements OnInit {
 
   downloadReportsCSV(): void {
     if (this.tableselectionCheckbox.selected.length > 0) {
-      const selectedReports: string[] = [];
+      const dataIds: string[] = [];
       this.tableselectionCheckbox.selected.forEach(element => {
-        selectedReports.push(element.id);
+        dataIds.push(element.id);
       });
 
-      this.wds.downloadReport(selectedReports, 'systemCheck', 'iqb-testcenter-syscheckreports.csv');
+      this.wds.downloadReport(dataIds, 'systemCheck', 'iqb-testcenter-syscheckreports.csv');
 
       this.tableselectionCheckbox.clear();
     }

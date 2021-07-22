@@ -17,12 +17,6 @@ export class WorkspaceDataService {
   public wsRole = 'RW';
   public wsName = '';
 
-  public navLinks = [
-    { path: 'files', label: 'Dateien' },
-    { path: 'syscheck', label: 'System-Check Berichte' },
-    { path: 'results', label: 'Ergebnisse/Antworten' }
-  ];
-
   constructor(
     private bs: BackendService,
     private deleteConfirmDialog: MatDialog,
@@ -30,10 +24,10 @@ export class WorkspaceDataService {
     public snackBar: MatSnackBar
   ) { }
 
-  downloadReport(reportsSelected: string[], reportType: string, filename: string): void {
+  downloadReport(dataIds: string[], reportType: string, filename: string): void {
       this.mds.setSpinnerOn();
 
-      this.bs.getReports(this.wsId, reportType, reportsSelected).subscribe((response) => {
+      this.bs.getReports(this.wsId, reportType, dataIds).subscribe((response) => {
         const errorMessage: string = 'Keine Daten verfügbar.';
         const errorType: string = 'Fehler';
         const errorDisplayDuration: number = 3000;

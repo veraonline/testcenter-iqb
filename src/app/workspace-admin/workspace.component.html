@@ -6,7 +6,7 @@
   <div class="adminbackground">
     <nav mat-tab-nav-bar>
       <a mat-tab-link
-          *ngFor="let link of wds.navLinks"
+          *ngFor="let link of navLinks"
           [routerLink]="link.path"
           routerLinkActive #rla="routerLinkActive"
           [active]="rla.isActive">
