@@ -4,6 +4,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { WorkspaceDataService } from './workspacedata.service';
 import {Observable, of} from "rxjs";
 import {MatDialog, MatDialogModule} from "@angular/material/dialog";
+import {MatSnackBarModule} from "@angular/material/snack-bar";
 
 class MockMatDialog {
   open(): { afterClosed: () => Observable<{ action: boolean }> } {
@@ -18,7 +19,8 @@ describe('WorkspaceDataService', () => {
     TestBed.configureTestingModule({
       imports: [
         HttpClientModule,
-        MatDialogModule
+        MatDialogModule,
+        MatSnackBarModule
       ],
       providers: [
         WorkspaceDataService,
