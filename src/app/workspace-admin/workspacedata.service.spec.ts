@@ -26,7 +26,8 @@ describe('WorkspaceDataService', () => {
         WorkspaceDataService,
         { provide: MatDialog, useValue: new MockMatDialog() },
       ]
-    });
+    })
+      .compileComponents();
   });
 
   it('should be created', inject([WorkspaceDataService], (service: WorkspaceDataService) => {
